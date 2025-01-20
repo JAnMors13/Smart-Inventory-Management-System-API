@@ -1,0 +1,21 @@
+﻿using Smart_Inventory_Management_System.DTOs.OrderItem;
+using Smart_Inventory_Management_System.Models;
+using System.ComponentModel.DataAnnotations;
+
+namespace Smart_Inventory_Management_System.DTOs.Order
+{
+    public class CreateOrderRequestDto
+    {
+        [Required]
+        [CustomValidation(typeof(OrderDateValidator), nameof(OrderDateValidator.ValidateNotInPast))]
+        [Range(typeof(DateTime), "01/01/2022", "12/31/2099", ErrorMessage = "Invalid order date range.")]
+        public DateOnly OrderDate { get; set; }
+
+        [Required]
+        [EnumDataType(typeof(OrderStatus), ErrorMessage = "Invalid order status.")]
+        [RegularExpression("Pending|Shipped|Delivered|Cancelled")]
+        public OrderStatus Status { get; set; }
+    }
+
+
+}
