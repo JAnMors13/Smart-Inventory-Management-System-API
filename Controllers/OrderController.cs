@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Smart_Inventory_Management_System.DTOs.Order;
 using Smart_Inventory_Management_System.Interface;
@@ -44,6 +45,7 @@ namespace Smart_Inventory_Management_System.Controllers
         }
 
         [HttpPost("{userId:int}")]
+        [Authorize]
         public async Task<IActionResult> AddOrder([FromRoute] int userId, [FromBody] CreateOrderRequestDto createDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -61,6 +63,7 @@ namespace Smart_Inventory_Management_System.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> UpdateOrder([FromRoute] int id, [FromBody] UpdateOrderRequestDto updateDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -77,6 +80,7 @@ namespace Smart_Inventory_Management_System.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> DeleteOrder([FromRoute] int id)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);

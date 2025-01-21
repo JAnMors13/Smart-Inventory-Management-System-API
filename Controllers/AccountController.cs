@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Smart_Inventory_Management_System.DTOs.Account;
 using Smart_Inventory_Management_System.Interface;
 using Smart_Inventory_Management_System.Models;
@@ -21,6 +22,29 @@ namespace Smart_Inventory_Management_System.Controllers
             _signInManager = signInManager;
         }
 
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginDto loginDto)
+        {
+            if (!ModelState.IsValid) 
+                return BadRequest(ModelState);
+
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == loginDto.Username.ToLower());
+            if (user == null) return Unauthorized("Invalid Usernam");
+
+            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+            if (!result.Succeeded) return Unauthorized("Username not Found and/or password incorect");
+
+            return Ok(
+                new NewUserDto
+                {
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    Token = _tokenService.CreateToken(user)
+                }        
+            );
+        }
+        
+
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
@@ -32,7 +56,8 @@ namespace Smart_Inventory_Management_System.Controllers
                 var appUser = new AppUser
                 {
                     UserName = registerDto.UserName,
-                    Email = registerDto.Email
+                    Email = registerDto.Email,
+                    PhoneNumber = registerDto.PhoneNumber
                 };
 
                 var createdUser = await _userManager.CreateAsync(appUser, registerDto.Password);

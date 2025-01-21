@@ -1,5 +1,6 @@
 ﻿using api.Interface;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Smart_Inventory_Management_System.DTOs.OrderItem;
 using Smart_Inventory_Management_System.Models;
@@ -21,6 +22,7 @@ namespace Smart_Inventory_Management_System.Controllers
 
         [HttpGet]
         [Route("{orderId:int}")]
+        [Authorize]
         public async Task<IActionResult> GetOrderItems([FromRoute] int orderId)
         {
             var orderItems = await _orderItemRepo.GetOrderItems(orderId);
@@ -36,6 +38,7 @@ namespace Smart_Inventory_Management_System.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create([FromBody] CreateOrderItemRequestDto createDto)
         {
             if (!ModelState.IsValid)
@@ -53,6 +56,7 @@ namespace Smart_Inventory_Management_System.Controllers
 
         [HttpDelete]
         [Route("{orderId:int}")]
+        [Authorize]
         public async Task<IActionResult> Delete([FromRoute] int orderId)
         {
             var deletedOrderItem = await _orderItemRepo.DeleteOrderItem(orderId);
