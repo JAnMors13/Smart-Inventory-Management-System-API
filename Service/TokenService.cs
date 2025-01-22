@@ -16,12 +16,13 @@ public class TokenService : ITokenService
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SigningKey"]));
     }
 
-    public string CreateToken(AppUser user)
+    public string CreateToken(AppUser AppUser)
     {
         var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(JwtRegisteredClaimNames.GivenName, user.UserName)
+            new Claim(JwtRegisteredClaimNames.Email, AppUser.Email),
+            new Claim(JwtRegisteredClaimNames.GivenName, AppUser.UserName),
+            new Claim("PhoneNumber", AppUser.PhoneNumber ?? string.Empty),
         };
 
         var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
@@ -36,7 +37,9 @@ public class TokenService : ITokenService
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
+
         var token = tokenHandler.CreateToken(tokenDescriptor);
+
         return tokenHandler.WriteToken(token);
     }
 }
