@@ -5,7 +5,7 @@ namespace Smart_Inventory_Management_System.Models
     public class UserProfile
     {
         public int Id { get; set; }
-        public string Username { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
         public UserRole Role { get; set; }
 
@@ -15,7 +15,7 @@ namespace Smart_Inventory_Management_System.Models
         public static void Configure(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserProfile>()
-                .HasIndex(u => u.Username)
+                .HasIndex(u => u.UserName)
                 .IsUnique();
         }
     }
