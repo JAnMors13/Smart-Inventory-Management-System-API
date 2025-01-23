@@ -66,7 +66,20 @@ namespace Smart_Inventory_Management_System.Data
                 {
                     Name = "User",
                     NormalizedName = "USER"
+                },
+
+                new IdentityRole
+                {
+                    Name = "Manager",
+                    NormalizedName = "MANAGER"
+                },
+
+                new IdentityRole
+                {
+                    Name = "Employee",
+                    NormalizedName = "EMPLOYEE"
                 }
+
             };
             modelBuilder.Entity<IdentityRole>().HasData(roles);
         }
