@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Smart_Inventory_Management_System.Data;
 
@@ -11,9 +12,11 @@ using Smart_Inventory_Management_System.Data;
 namespace Smart_Inventory_Management_System.Migrations
 {
     [DbContext(typeof(SIMSDbContext))]
-    partial class SIMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250219074257_addingOrderInAppUser")]
+    partial class addingOrderInAppUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,25 +54,25 @@ namespace Smart_Inventory_Management_System.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "ea476108-f253-4591-a4d0-d809bfbf87e9",
+                            Id = "cac62fbd-96c3-4e96-b05b-4fb713f5c0e1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "8840b4c5-b0f8-48c3-acf6-674e68977b75",
+                            Id = "b8342183-eb80-46ee-a097-3011ad9a313e",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "309ff8a7-8f0d-4138-89c6-133c089432aa",
+                            Id = "2679f817-bedb-4ed9-976b-a60e5396d7e2",
                             Name = "Manager",
                             NormalizedName = "MANAGER"
                         },
                         new
                         {
-                            Id = "7fb7ce3d-4de1-4ff4-860c-412e0b479a2d",
+                            Id = "15e01c5b-08b4-4d78-a7ba-404a0b56ace7",
                             Name = "Employee",
                             NormalizedName = "EMPLOYEE"
                         });
@@ -223,9 +226,6 @@ namespace Smart_Inventory_Management_System.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("int");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -274,17 +274,21 @@ namespace Smart_Inventory_Management_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateOnly>("OrderDate")
-                        .HasColumnType("date");
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.HasIndex("UserId");
 
@@ -345,6 +349,33 @@ namespace Smart_Inventory_Management_System.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("Smart_Inventory_Management_System.Models.UserProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserName")
+                        .IsUnique();
+
+                    b.ToTable("UserProfiles");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -398,7 +429,11 @@ namespace Smart_Inventory_Management_System.Migrations
 
             modelBuilder.Entity("Smart_Inventory_Management_System.Models.Order", b =>
                 {
-                    b.HasOne("Smart_Inventory_Management_System.Models.AppUser", "User")
+                    b.HasOne("Smart_Inventory_Management_System.Models.AppUser", null)
+                        .WithMany("Orders")
+                        .HasForeignKey("AppUserId");
+
+                    b.HasOne("Smart_Inventory_Management_System.Models.UserProfile", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -455,6 +490,11 @@ namespace Smart_Inventory_Management_System.Migrations
             modelBuilder.Entity("Smart_Inventory_Management_System.Models.Product", b =>
                 {
                     b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("Smart_Inventory_Management_System.Models.UserProfile", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

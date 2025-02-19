@@ -25,25 +25,29 @@ namespace Smart_Inventory_Management_System.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
-            if (!ModelState.IsValid) 
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == loginDto.Username.ToLower());
-            if (user == null) return Unauthorized("Invalid Usernam");
+            if (user == null) return Unauthorized("Invalid Username");
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
-            if (!result.Succeeded) return Unauthorized("Username not Found and/or password incorect");
+            if (!result.Succeeded) return Unauthorized("Username not found and/or password incorrect");
 
-            return Ok(
-                new NewUserDto
-                {
-                    UserName = user.UserName,
-                    Email = user.Email,
-                    Token = _tokenService.CreateToken(user)
-                }        
-            );
+            // Get the user's role
+            var roles = await _userManager.GetRolesAsync(user);
+            string userRole = roles.FirstOrDefault() ?? "User";
+
+            return Ok(new NewUserDto
+            {
+                UserName = user.UserName,
+                Email = user.Email,
+                Token = _tokenService.CreateToken(user),
+                Role = userRole 
+            });
         }
-        
+
+
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
@@ -52,6 +56,10 @@ namespace Smart_Inventory_Management_System.Controllers
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
+
+                // Check if this is the first user in the database
+                bool isFirstUser = !_userManager.Users.Any();
+                string role = isFirstUser ? "Admin" : "User";
 
                 var appUser = new AppUser
                 {
@@ -72,7 +80,8 @@ namespace Smart_Inventory_Management_System.Controllers
                             {
                                 UserName = appUser.UserName,
                                 Email = appUser.Email,
-                                Token = _tokenService.CreateToken(appUser)
+                                Token = _tokenService.CreateToken(appUser),
+                                Role = role
                             }
                         );
                     }

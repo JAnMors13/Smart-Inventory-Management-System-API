@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Smart_Inventory_Management_System.Data;
@@ -10,24 +11,25 @@ namespace Smart_Inventory_Management_System.Repository
 {
     public class UserRepository : IUserRepository
     {
-        public Task<UserProfile> AddUserAsync(UserProfile user)
+        private readonly SIMSDbContext _context;
+        public UserRepository(SIMSDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task<UserProfile> GetUserAsync(string Username)
+        public async Task<IEnumerable<AppUser>> GetAllUsersAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Users.Include(c => c.Orders).ToListAsync();
         }
 
-        public Task<UserProfile?> UpdateUserAsync(int id, UpdateUserProfileRequestDto userDto)
+        public async Task<AppUser> GetUserProfileById(string id)
         {
-            throw new NotImplementedException();
+            return await _context.Users.Include(c => c.Orders).FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        public Task<bool> UserExistsAsync(int UserId)
+        public async Task<bool> UserExistsAsync(string userId)
         {
-            throw new NotImplementedException();
+            return await _context.Users.AnyAsync(u => u.Id == userId);
         }
     }
 }

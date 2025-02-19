@@ -9,10 +9,8 @@ namespace Smart_Inventory_Management_System.Data
     {
         public SIMSDbContext(DbContextOptions<SIMSDbContext> options) : base(options)
         {
-
         }
 
-        public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Order> Orders { get; set; }
@@ -22,9 +20,6 @@ namespace Smart_Inventory_Management_System.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Call the Configure method of User to apply the unique index for Username
-            UserProfile.Configure(modelBuilder);
-
             // Configuring One-to-Many relationship para sa Products -> Categories
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Category)
@@ -32,12 +27,13 @@ namespace Smart_Inventory_Management_System.Data
                 .HasForeignKey(p => p.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Configuring One-to-Many relationship para sa Orders -> Users
+            // Configuring One-to-Many relationship para sa Orders -> AppUser
             modelBuilder.Entity<Order>()
-                .HasOne(u => u.User)
-                .WithMany(o => o.Orders)
-                .HasForeignKey(u => u.UserId)
+                .HasOne(o => o.User)
+                .WithMany(u => u.Orders)
+                .HasForeignKey(o => o.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
 
             // Configuring Many-to-Many relationship para sa Products -> OrderItems
             modelBuilder.Entity<OrderItem>()
@@ -53,36 +49,16 @@ namespace Smart_Inventory_Management_System.Data
                 .WithMany(p => p.OrderItems)
                 .HasForeignKey(oi => oi.ProductId);
 
-
+            // Seed Roles
             List<IdentityRole> roles = new List<IdentityRole>
             {
-                new IdentityRole
-                {
-                    Name = "Admin",
-                    NormalizedName = "ADMIN"
-                },
-
-                new IdentityRole
-                {
-                    Name = "User",
-                    NormalizedName = "USER"
-                },
-
-                new IdentityRole
-                {
-                    Name = "Manager",
-                    NormalizedName = "MANAGER"
-                },
-
-                new IdentityRole
-                {
-                    Name = "Employee",
-                    NormalizedName = "EMPLOYEE"
-                }
-
+                new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" },
+                new IdentityRole { Name = "User", NormalizedName = "USER" },
+                new IdentityRole { Name = "Manager", NormalizedName = "MANAGER" },
+                new IdentityRole { Name = "Employee", NormalizedName = "EMPLOYEE" }
             };
+
             modelBuilder.Entity<IdentityRole>().HasData(roles);
         }
-
     }
 }

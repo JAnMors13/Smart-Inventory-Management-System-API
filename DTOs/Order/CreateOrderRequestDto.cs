@@ -1,4 +1,5 @@
-﻿using Smart_Inventory_Management_System.DTOs.OrderItem;
+﻿using Smart_Inventory_Management_System.Data.Enum;
+using Smart_Inventory_Management_System.DTOs.OrderItem;
 using Smart_Inventory_Management_System.Models;
 using System.ComponentModel.DataAnnotations;
 
@@ -8,7 +9,7 @@ namespace Smart_Inventory_Management_System.DTOs.Order
     {
         [Required]
         [CustomValidation(typeof(OrderDateValidator), nameof(OrderDateValidator.ValidateNotInPast))]
-        [Range(typeof(DateTime), "01/01/2022", "12/31/2099", ErrorMessage = "Invalid order date range.")]
+        [Range(typeof(DateOnly), "01/01/2022", "12/31/2099", ErrorMessage = "Invalid order date range.")]
         public DateOnly OrderDate { get; set; }
 
         [Required]

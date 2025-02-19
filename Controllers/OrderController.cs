@@ -44,9 +44,9 @@ namespace Smart_Inventory_Management_System.Controllers
             return Ok(orderDto);
         }
 
-        [HttpPost("{userId:int}")]
+        [HttpPost("{userId}")]
         [Authorize]
-        public async Task<IActionResult> AddOrder([FromRoute] int userId, [FromBody] CreateOrderRequestDto createDto)
+        public async Task<IActionResult> AddOrder([FromRoute] string userId, [FromForm] CreateOrderRequestDto createDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 

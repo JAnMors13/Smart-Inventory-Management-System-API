@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Smart_Inventory_Management_System.Data;
 
@@ -11,9 +12,11 @@ using Smart_Inventory_Management_System.Data;
 namespace Smart_Inventory_Management_System.Migrations
 {
     [DbContext(typeof(SIMSDbContext))]
-    partial class SIMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250214130751_JWTMigration")]
+    partial class JWTMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,25 +54,25 @@ namespace Smart_Inventory_Management_System.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "ea476108-f253-4591-a4d0-d809bfbf87e9",
+                            Id = "cfbcac62-ad8c-4536-a597-98dca9f4db66",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "8840b4c5-b0f8-48c3-acf6-674e68977b75",
+                            Id = "4acf51e5-37c3-4cd2-8c5b-eb40687d5073",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "309ff8a7-8f0d-4138-89c6-133c089432aa",
+                            Id = "ec734223-909b-4da9-a643-90fd43954dfd",
                             Name = "Manager",
                             NormalizedName = "MANAGER"
                         },
                         new
                         {
-                            Id = "7fb7ce3d-4de1-4ff4-860c-412e0b479a2d",
+                            Id = "cafc5a21-2d29-4ed1-a3af-456571c3c64b",
                             Name = "Employee",
                             NormalizedName = "EMPLOYEE"
                         });
@@ -223,7 +226,7 @@ namespace Smart_Inventory_Management_System.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Role")
+                    b.Property<int?>("Role")
                         .HasColumnType("int");
 
                     b.Property<string>("SecurityStamp")
@@ -274,15 +277,14 @@ namespace Smart_Inventory_Management_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateOnly>("OrderDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -345,6 +347,33 @@ namespace Smart_Inventory_Management_System.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("Smart_Inventory_Management_System.Models.UserProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserName")
+                        .IsUnique();
+
+                    b.ToTable("UserProfiles");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -398,7 +427,7 @@ namespace Smart_Inventory_Management_System.Migrations
 
             modelBuilder.Entity("Smart_Inventory_Management_System.Models.Order", b =>
                 {
-                    b.HasOne("Smart_Inventory_Management_System.Models.AppUser", "User")
+                    b.HasOne("Smart_Inventory_Management_System.Models.UserProfile", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -437,11 +466,6 @@ namespace Smart_Inventory_Management_System.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("Smart_Inventory_Management_System.Models.AppUser", b =>
-                {
-                    b.Navigation("Orders");
-                });
-
             modelBuilder.Entity("Smart_Inventory_Management_System.Models.Category", b =>
                 {
                     b.Navigation("Products");
@@ -455,6 +479,11 @@ namespace Smart_Inventory_Management_System.Migrations
             modelBuilder.Entity("Smart_Inventory_Management_System.Models.Product", b =>
                 {
                     b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("Smart_Inventory_Management_System.Models.UserProfile", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

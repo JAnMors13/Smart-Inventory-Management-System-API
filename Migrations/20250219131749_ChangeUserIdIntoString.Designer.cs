@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Smart_Inventory_Management_System.Data;
 
@@ -11,9 +12,11 @@ using Smart_Inventory_Management_System.Data;
 namespace Smart_Inventory_Management_System.Migrations
 {
     [DbContext(typeof(SIMSDbContext))]
-    partial class SIMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250219131749_ChangeUserIdIntoString")]
+    partial class ChangeUserIdIntoString
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,25 +54,25 @@ namespace Smart_Inventory_Management_System.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "ea476108-f253-4591-a4d0-d809bfbf87e9",
+                            Id = "210d575a-fec3-4a70-b11f-4c44bac8067b",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "8840b4c5-b0f8-48c3-acf6-674e68977b75",
+                            Id = "10914079-4df7-47d4-a7dd-4e64779e3330",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "309ff8a7-8f0d-4138-89c6-133c089432aa",
+                            Id = "19cfe25e-3ad6-4a15-b533-04f65cdad667",
                             Name = "Manager",
                             NormalizedName = "MANAGER"
                         },
                         new
                         {
-                            Id = "7fb7ce3d-4de1-4ff4-860c-412e0b479a2d",
+                            Id = "69c50b44-6a36-4219-beb7-b7dc7cccd1ef",
                             Name = "Employee",
                             NormalizedName = "EMPLOYEE"
                         });
@@ -274,8 +277,11 @@ namespace Smart_Inventory_Management_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateOnly>("OrderDate")
-                        .HasColumnType("date");
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -285,6 +291,8 @@ namespace Smart_Inventory_Management_System.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.HasIndex("UserId");
 
@@ -398,8 +406,12 @@ namespace Smart_Inventory_Management_System.Migrations
 
             modelBuilder.Entity("Smart_Inventory_Management_System.Models.Order", b =>
                 {
-                    b.HasOne("Smart_Inventory_Management_System.Models.AppUser", "User")
+                    b.HasOne("Smart_Inventory_Management_System.Models.AppUser", null)
                         .WithMany("Orders")
+                        .HasForeignKey("AppUserId");
+
+                    b.HasOne("Smart_Inventory_Management_System.Models.AppUser", "User")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();

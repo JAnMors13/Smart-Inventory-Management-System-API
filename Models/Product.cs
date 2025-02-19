@@ -1,4 +1,6 @@
-﻿namespace Smart_Inventory_Management_System.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Smart_Inventory_Management_System.Models
 {
     public class Product
     {
@@ -8,6 +10,7 @@
         public decimal Price { get; set; }
         public int Quantity { get; set; } 
         public string SKU { get; set; } = string.Empty; // Stock Keeping Unit kai para sa pag-track sa product sa inventory 
+        [ForeignKey("Category")]
         public int CategoryId { get; set; }
 
         public Category Category { get; set; } // Many-to-One relationship ni siya sa Category.cs
