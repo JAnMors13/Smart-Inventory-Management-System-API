@@ -18,7 +18,7 @@
 
 <h2>🛠️ Tech Stack</h2>
 <ul>
-  <li>🌐 <b>Framework:</b> ASP.NET Core 8 Web API</li>
+  <li>🌐 <b>Framework:</b> ASP.NET Core  Web API</li>
   <li>🛢️ <b>Database:</b> Microsoft SQL Server, Entity Framework Core</li>
   <li>🔐 <b>Authentication:</b> JWT (JSON Web Token)</li>
   <li>⚙️ <b>Architecture:</b> Repository Pattern, DTOs, AutoMapper</li>
